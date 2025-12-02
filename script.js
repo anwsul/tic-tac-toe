@@ -8,7 +8,8 @@ playGame();
 
 function playGame() {
     let count = 0;
-    let currentSelection = "O";
+    let currentSelection = "O";;
+
 
     while (true) {
         let input = prompt().split(' ');
@@ -22,10 +23,10 @@ function playGame() {
                 break;
             }
 
-            if (count == 9) {
+            if (count == 8) {
                 alert(`${gameBoardToString()}It's a draw!`);
                 break;
-            }
+}
 
             currentSelection = currentSelection == "X" ? "O" : "X"; 
             count++;
@@ -52,6 +53,7 @@ function gameBoardToString() {
     return board;
 }
 
+
 function placeSelection(selection, row, col) {
     if (gameBoard[row][col] == null) {
         gameBoard[row][col] = selection;
@@ -70,9 +72,17 @@ function checkColumn(index) {
 }
 
 function checkMainDiagonal() {
+    if (!gameBoard[1][1]) {
+        return false;
+    }
+
     return gameBoard[0][0] == gameBoard[1][1] && gameBoard[1][1] == gameBoard[2][2];
 }
 
 function checkAntiDiagonal() {
+     if (!gameBoard[1][1]) {
+        return false;
+    }
+
     return gameBoard[0][2] == gameBoard[1][1] && gameBoard[1][1] == gameBoard[2][0];
 }
