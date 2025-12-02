@@ -1,58 +1,65 @@
-let gameBoard = [
-    [null, null, null],
-    [null, null, null],
-    [null, null, null]
-];
+let gameBoard;
+let moves;
 
+const cells = document.querySelectorAll('.grid-container button');
+const result = document.querySelector('.result');
+const restartButton = document.querySelector('.restart-button');
+
+restartButton.onclick = init;
 playGame();
 
-function playGame() {
-    let count = 0;
-    let currentSelection = "O";;
+function init() {
+    moves= 0;
+    gameBoard = [
+        [null, null, null],
+        [null, null, null],
+        [null, null, null]
+    ];
 
-
-    while (true) {
-        let input = prompt().split(' ');
-        let row = input[0];
-        let col = input[1];
-        let isPlacementValid = placeSelection(currentSelection, row, col);
-
-        if (isPlacementValid) {
-            if (checkRow(row) || checkColumn(col) || checkMainDiagonal() || checkAntiDiagonal()) {
-                alert(`${gameBoardToString()}\n\n${currentSelection} has won!`);
-                break;
-            }
-
-            if (count == 8) {
-                alert(`${gameBoardToString()}It's a draw!`);
-                break;
-}
-
-            currentSelection = currentSelection == "X" ? "O" : "X"; 
-            count++;
-        }
-
-        alert(gameBoardToString());
-    }
-}
-
-function gameBoardToString() {
-    let board = "";
-
-    gameBoard.forEach(row => {
-        row.forEach(placement => {
-            if (placement)
-                board += `[${placement}]`;
-            else
-                board += "[_]";
-        });
-
-        board += "\n";
+    cells.forEach(cell => {
+        cell.textContent = "";
+        cell.disabled = false;
     });
 
-    return board;
+    result.style.display = "none";
+    restartButton.style.display = "none";
 }
 
+function playGame() {
+    init();
+    let currentSelection = "X";
+
+    cells.forEach(cell => {
+        cell.onclick = () => {
+            let row = cell.dataset.row;
+            let col = cell.dataset.col;
+            let isPlacementValid = placeSelection(currentSelection, row, col);
+
+            if (isPlacementValid) {
+                moves++;
+                cell.textContent = currentSelection;
+                let gameEndMessage = "";
+
+                if (checkRow(row) || checkColumn(col) || checkMainDiagonal() || checkAntiDiagonal()) {
+                    gameEndMessage = `${currentSelection} has won`;
+                }
+
+                if (!gameEndMessage && moves >= 9) {
+                    gameEndMessage = `It's a draw!`;
+                }
+
+                if (gameEndMessage) {
+                    cells.forEach(cell => cell.disabled = true);
+                    restartButton.style.display = "block";
+                    result.style.display = "block";
+                    result.textContent = gameEndMessage;
+                }
+
+                currentSelection = currentSelection == "X" ? "O" : "X"; 
+            }
+        }
+    });
+}
 
 function placeSelection(selection, row, col) {
     if (gameBoard[row][col] == null) {
